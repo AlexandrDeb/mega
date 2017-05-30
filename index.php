@@ -11,7 +11,7 @@ require_once(ROOT.'/components/Autoload.php');
 
 
 // создаем переменную бота
-$token = "357426031:AAF2iYOcp4IDX26TxRCV0lw7Ugp35dal7m4";
+$token = "///////////////////";
 $bot = new \TelegramBot\Api\Client($token);
 
 // если бот еще не зарегистрирован - регистрируем

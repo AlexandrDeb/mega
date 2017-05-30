@@ -7,7 +7,7 @@ $bot->on(function ($Update) use ($bot) {
 
 
 
-    
+
     if (mb_stripos($mtext, $message) !== false) {
 
         $keys = $mtext;
@@ -49,7 +49,6 @@ $bot->on(function ($Update) use ($bot) {
                             $cpl++;
                             if ($cnt <= 2) {
                                $bot->sendMessage($message->getChat()->getId(), $link);
-                               // $bot->sendMessage(219002954, "Привет Коля");
                                // $bot->sendMessage($message->getChat()->getId(), $cid);
                                 $cnt++;
                             }
