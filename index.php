@@ -4,14 +4,16 @@ header('Content-Type: text/html; charset=utf-8');
 // подрубаем API
 require_once("vendor/autoload.php");
 
-// Подключение файлов системы
+/// Подключение файлов системы
 define('ROOT', dirname(__FILE__));
-require_once(ROOT.'/components/Autoload.php');
+require_once(ROOT . '/components/Autoload.php');
+//файл который находит блогеров для отправки
 
-
+//файл добавления новых юзеров
+//require_once(ROOT . '/components/AddNewUser.php');
 
 // создаем переменную бота
-$token = "///////////////////";
+$token = "";
 $bot = new \TelegramBot\Api\Client($token);
 
 // если бот еще не зарегистрирован - регистрируем
@@ -29,6 +31,17 @@ if (!file_exists("registered.trigger")) {
     }
 }
 
+if ($_GET['send'] == "checkforsend") {
+    //отправляет  посты
+    require_once(ROOT . '/components/CheckForSend.php');
+
+}elseif ($_GET['updates'] == "checkupdates"){
+    //файл проверяющий обновления posts
+    require_once(ROOT . '/components/CheckUpdates.php');
+
+}
+
+
 // обязательное. Запуск бота
 $bot->command('start', function ($message) use ($bot) {
     $answer = 'Добро пожаловать, здесь собраны самые интересные новости /help ' . "\xF0\x9F\x98\x83";
@@ -39,135 +52,28 @@ $bot->command('start', function ($message) use ($bot) {
 $bot->command('help', function ($message) use ($bot) {
     $answer = 'Команды:
 /help - информация :)
-/top_content - Последние видосы
-/news_p - Новости политики
-/news_s - Новости спорта
-/news_m - Новости мира';
+/list - Список блогеров';
 
     $bot->sendMessage($message->getChat()->getId(), $answer);
 });
 
-$bot->command('news_p', function ($message) use ($bot) {
+
+$bot->command('list', function ($message) use ($bot) {
     $answer = '';
 
-
-    $rss = simplexml_load_file('http://news.liga.net/politics/rss.xml');
-// print_r( $rss );
-    $cnt = 0;
-    foreach ($rss->channel->item as $item) {
-
-        if ($cnt < 3) {
-            $image = $item->enclosure;
-            $answer = "\xE2\x9E\xA1 " . '<b>' . $item->title . '</b>' . '. ' . $item->description . " (<a href='" . $item->link . "'>Подробней...</a>)\n";
-
-            $image = $image['url'];
-
-            //выводим на печать текст статьи
-            $bot->sendMessage($message->getChat()->getId(), $answer, "HTML", true);
-            $bot->sendPhoto($message->getChat()->getId(), $image);
-
-            $cnt++;
-        }
+    $allBlogers = Channel::getAllBlogers();
+    $cntBlogers = count($allBlogers);
+    for ($i = 0; $i < $cntBlogers; $i++) {
+        $answer = strip_tags($allBlogers[$i][0]) . ". " . strip_tags($allBlogers[$i][1]);
+        $bot->sendMessage($message->getChat()->getId(), $answer, "HTML", true);
     }
+    //выводим на печать текст статьи
+
+
 });
 
 
-$bot->command('news_s', function ($message) use ($bot) {
-    $answer = '';
-
-
-    $rss = simplexml_load_file('http://news.liga.net/sport/rss.xml');
-// print_r( $rss );
-    $cnt = 0;
-    foreach ($rss->channel->item as $item) {
-
-        if ($cnt < 3) {
-            $image = $item->enclosure;
-            $answer = "\xF0\x9F\x8F\x86" . '<b>' . $item->title . '</b>' . '. ' . $item->description . " (<a href='" . $item->link . "'>Подробней...</a>)\n";
-
-            $image = $image['url'];
-
-            //выводим на печать текст статьи
-            $bot->sendMessage($message->getChat()->getId(), $answer, "HTML", true);
-            $bot->sendPhoto($message->getChat()->getId(), $image);
-
-            $cnt++;
-        }
-    }
-});
-
-
-$bot->command('news_m', function ($message) use ($bot) {
-    $answer = '';
-
-
-    $rss = simplexml_load_file('http://news.liga.net/world/rss.xml');
-// print_r( $rss );
-    $cnt = 0;
-    foreach ($rss->channel->item as $item) {
-
-        if ($cnt < 3) {
-            $image = $item->enclosure;
-            $answer = "\xF0\x9F\x8C\x8D" . '<b>' . $item->title . '</b>' . '. ' . $item->description . " (<a href='" . $item->link . "'>Подробней...</a>)\n";
-
-            $image = $image['url'];
-
-            //выводим на печать текст статьи
-            $bot->sendMessage($message->getChat()->getId(), $answer, "HTML", true);
-            $bot->sendPhoto($message->getChat()->getId(), $image);
-
-            $cnt++;
-        }
-    }
-});
-
-$bot->command('top_content', function ($message) use ($bot) {
-    $cnt = 0;
-    $content = simplexml_load_file('http://www.youtube.com/feeds/videos.xml?channel_id=UCNb2BkmQu3IfQVcaPExHkvQ');
-//var_dump($content);
-
-    foreach ($content->entry as $item) {
-        $id = $item->id;
-        $id = trim(substr($id, 9));
-        $answer = "https://www.youtube.com/watch?v=" . "{$id}";
-        if ($cnt < 1) {
-            $bot->sendMessage($message->getChat()->getId(), $answer);
-            $cnt++;
-        }
-
-    }
-});
-
-// запускаем обработку
-/////////////////////////////////////////////
-
-/*if ($_GET['cname'] == "choicenews") {
-    $answer = '';
-
-
-    $rss = simplexml_load_file('http://news.liga.net/world/rss.xml');
-// print_r( $rss );
-    $cnt = 0;
-    foreach ($rss->channel->item as $item) {
-
-        if ($cnt < 1) {
-            $image = $item->enclosure;
-            $answer = "\xF0\x9F\x8C\x8D" . '<b>' . $item->title . '</b>' . '. ' . $item->description . " (<a href='" . $item->link . "'>Подробней...</a>)\n";
-
-            $image = $image['url'];
-
-            //выводим на печать текст статьи
-            $bot->sendMessage("@choicenews", $answer, "HTML", true);
-            $bot->sendPhoto("@choicenews", $image);
-
-
-            $cnt++;
-        }
-    }
-
-}*/
-//////////////////////////////////////////////////////////////////////////////////////////
-include_once('list_of_bloggers/list.php');
+/*include_once('list_of_bloggers/list.php');
 if ($_GET['newsname'] == "lastvideo") {
     $cnt = count($array);
 
@@ -195,6 +101,10 @@ if ($_GET['newsname'] == "lastvideo") {
             $index++;
         }
     }
-}
-require_once ('parser.php');
+}*/
+
+
+//require_once(ROOT . '/components/CheckForUpdates.php');
+//require_once('parser.php');
+
 $bot->run();
