@@ -18,9 +18,9 @@ $bot->on(function ($Update) use ($bot) {
         
         $userId = $cid;// мой id
         $bloger = $mtext;// то что я ввожу
-        
-        
-        
+
+
+
         $bloger_id = $channel2->requestedBloger($bloger);
         $link = $channel2->requestedLink($bloger);
         $listUser = $user2->getListUsers();

@@ -2,8 +2,8 @@
 
 class Users
 {
-
-
+    
+    
     public static function setUser($user, $bloger_id)
     {
         // Соединение с БД
@@ -59,7 +59,7 @@ class Users
         return $categoryList;
     }
 
-
+//Получаю все user_id и bloger_id  с таблици users
     public static function getAllUsers()
     {
         // Соединение с БД
@@ -79,30 +79,30 @@ class Users
         return $categoryList;
     }
 
-    /*
-    //Список юзеров, которым нужно рассылать данную рассылку
-        public static function getUsersForSend($bloger_id)
-        {
-            // Соединение с БД
-            $db = Db::getConnection();
-    
-            // Текст запроса к БД
-            $sql = 'SELECT user  FROM users WHERE bloger_id = :bloger_id AND status="1"';
-    
-            // Используется подготовленный запрос
-            $result = $db->prepare($sql);
-            $result->bindParam(':bloger_id', $bloger_id, PDO::PARAM_STR);
-    
-            // Указываем, что хотим получить данные в виде массива
-            $result->setFetchMode(PDO::FETCH_ASSOC);
-    
-    
-            // Выполнение коменды
-            $result->execute();
-    
-            // Возвращаем значение
-            return $row = $result->fetch();
-        }*/
+/*
+//Список юзеров, которым нужно рассылать данную рассылку
+    public static function getUsersForSend($bloger_id)
+    {
+        // Соединение с БД
+        $db = Db::getConnection();
+
+        // Текст запроса к БД
+        $sql = 'SELECT user  FROM users WHERE bloger_id = :bloger_id AND status="1"';
+
+        // Используется подготовленный запрос
+        $result = $db->prepare($sql);
+        $result->bindParam(':bloger_id', $bloger_id, PDO::PARAM_STR);
+
+        // Указываем, что хотим получить данные в виде массива
+        $result->setFetchMode(PDO::FETCH_ASSOC);
+
+
+        // Выполнение коменды
+        $result->execute();
+
+        // Возвращаем значение
+        return $row = $result->fetch();
+    }*/
 
 
 //Список юзеров, которым нужно рассылать данную рассылку
@@ -134,28 +134,22 @@ class Users
         return $products;
     }
 
+// удаляем подписку юзера на определенный канал
+    public static function deleteBlogerId($user, $bloger_id)
+    {
+        // Соединение с БД
+        $db = Db::getConnection();
 
-    /* public static function getOneUser($user)
-     {
-         // Соединение с БД
-         $db = Db::getConnection();
+        // Текст запроса к БД
+        $sql = 'DELETE FROM users WHERE user = :user AND bloger_id = :bloger_id';
 
-         // Текст запроса к БД
-         $sql = 'SELECT bloger_id FROM users WHERE user =  :user';
+        // Получение и возврат результатов. Используется подготовленный запрос
+        $result = $db->prepare($sql);
+        $result->bindParam(':user', $user, PDO::PARAM_INT);
+        $result->bindParam(':bloger_id', $bloger_id, PDO::PARAM_INT);
 
-         $result = $db->prepare($sql);
-         $result->bindParam(':user', $user, PDO::PARAM_INT);
+        $result->execute();
+    }
 
-         // Указываем, что хотим получить данные в виде массива
-         $result->setFetchMode(PDO::FETCH_ASSOC);
-
-         // Выполняем запрос
-         $result->execute();
-
-         // Возвращаем данные
-         return $result->fetch();
-     }
-
-     */
 
 }

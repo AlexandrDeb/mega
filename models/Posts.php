@@ -2,9 +2,29 @@
 
 class Posts
 {
+//Метод для добавление новых постов в таблицу Ppsts
+    public static function addNewPost($bloger_id, $link)
+    {
+        $status = 0;
+        //Соединение с базой данных
+        $db = Db::getConnection();
+
+        $sql = 'INSERT INTO posts (bloger_id, link, status) VALUES (:bloger_id, :link, :status)';
+
+        //подготовка запроса
+        $result = $db->prepare($sql);
+
+        $result->bindParam(':bloger_id', $bloger_id, PDO::PARAM_STR);
+        $result->bindParam(':link', $link, PDO::PARAM_STR);
+        $result->bindParam(':status', $status, PDO::PARAM_INT);
+        //выполнение запроса
+        return $result->execute();
+
+    }
+    
+
     public static function checkNewPosts()
     {
-
         // Соединение с БД
         $db = Db::getConnection();
 
@@ -22,7 +42,6 @@ class Posts
 
         return $updates;
     }
-
 
 
     public static function setPost($bloger_id, $link)
@@ -88,13 +107,13 @@ class Posts
         {
             // Соединение с БД
             $db = Db::getConnection();
-
+    
             // Текст запроса к БД
             $sql = "UPDATE posts
-                SET
-                    status = :status,
+                SET 
+                    status = :status, 
                 WHERE bloger_id = :bloger_id";
-
+    
             // Получение и возврат результатов. Используется подготовленный запрос
             $result = $db->prepare($sql);
             $result->bindParam(':bloger_id', $bloger_id, PDO::PARAM_INT);
@@ -119,10 +138,6 @@ class Posts
         $result->bindParam(':status', $status, PDO::PARAM_INT);
         return $result->execute();
     }
-
-
-
-
 
 
 }

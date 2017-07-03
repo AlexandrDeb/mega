@@ -14,7 +14,7 @@ class UserController
     {
         $AllElement = Users::getUniqueBlogers();
 
-        return $AllElement;
+       return $AllElement;
     }
 
 
@@ -37,33 +37,41 @@ class UserController
     }
 
 
-    public function createUser($userId, $bloger_id)
-    {
-        return Users::setUser($userId, $bloger_id);
+     public function createUser($userId, $bloger_id)
+     {
+         return Users::setUser($userId, $bloger_id);
+ 
+     }
 
+ //Если находит юзера в базе, то возвращает все id каналов на которые он подписан, а затем сравнивает эти id c  с  присланным юзером
+ //для подписки
+     public function getListSubscriptions($listUser, $userId, $channelId)
+     {
+         $listChannel = array();
+         for ($z = 0; $z < count($listUser); $z++) {
+             if ($listUser[$z]["user"] == $userId) {
+                 $listChannel[] = $listUser[$z]["bloger_id"];
+             }
+         }
+         $index = 0;
+         $cnt = count($listChannel);
+         for ($w = 0; $w < $cnt; $w++) {
+             if ($channelId == $listChannel[$w]) {
+                 $index++;
+             }
+         }
+         return $index;
+         
+ 
+     }
+
+    //удаляем подписку на блогера
+    public function deleteSubscription($user, $bloger_id)
+    {
+        Users::deleteBlogerId($user, $bloger_id);
     }
 
-    //Если находит юзера в базе, то возвращает все id каналов на которые он подписан, а затем сравнивает эти id c  с  присланным юзером
-    //для подписки
-    public function getListSubscriptions($listUser, $userId, $channelId)
-    {
-        $listChannel = array();
-        for ($z = 0; $z < count($listUser); $z++) {
-            if ($listUser[$z]["user"] == $userId) {
-                $listChannel[] = $listUser[$z]["bloger_id"];
-            }
-        }
-        $index = 0;
-        $cnt = count($listChannel);
-        for ($w = 0; $w < $cnt; $w++) {
-            if ($channelId == $listChannel[$w]) {
-                $index++;
-            }
-        }
-        return $index;
 
-
-    }
 
 
 }

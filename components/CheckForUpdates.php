@@ -1,6 +1,6 @@
 <?php
 
-if ($_GET['cname'] == "choicenews") {
+/*if ($_GET['cname'] == "choicenews") {
     $user = new UserController();
     $channel = new ChannelController();
     $listUser = $user->getListUsers();
@@ -26,4 +26,4 @@ if ($_GET['cname'] == "choicenews") {
             }
         }
     }
-}
+}*/

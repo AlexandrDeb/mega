@@ -7,10 +7,11 @@ require_once("vendor/autoload.php");
 /// Подключение файлов системы
 define('ROOT', dirname(__FILE__));
 require_once(ROOT . '/components/Autoload.php');
+
 //файл который находит блогеров для отправки
 
-//файл добавления новых юзеров
-//require_once(ROOT . '/components/AddNewUser.php');
+
+
 
 // создаем переменную бота
 $token = "";
@@ -32,19 +33,20 @@ if (!file_exists("registered.trigger")) {
 }
 
 if ($_GET['send'] == "checkforsend") {
+
+    //Обновление постов
+    require_once(ROOT . '/components/CheckUpdatesPosts.php');
     //отправляет  посты
     require_once(ROOT . '/components/CheckForSend.php');
-
-}elseif ($_GET['updates'] == "checkupdates"){
-    //файл проверяющий обновления posts
-    require_once(ROOT . '/components/CheckUpdates.php');
-
 }
 
 
 // обязательное. Запуск бота
 $bot->command('start', function ($message) use ($bot) {
-    $answer = 'Добро пожаловать, здесь собраны самые интересные новости /help ' . "\xF0\x9F\x98\x83";
+    $answer = 'Добро пожаловать, я могу присылать тебе самые свежие видео с You Tube прямо сюда, 
+    для этого нажми /list, и пришли поочередно номера блогеров от которых ты хочешь получать видос, 
+    если тебе какой-то блогер надоест, также пришли его номе и я уберу его из твоего списка можешь
+     также нажать /help и увидеть мои команды' . "\xF0\x9F\x98\x83";
     $bot->sendMessage($message->getChat()->getId(), $answer);
 });
 
@@ -59,52 +61,12 @@ $bot->command('help', function ($message) use ($bot) {
 
 
 $bot->command('list', function ($message) use ($bot) {
-    $answer = '';
-
-    $allBlogers = Channel::getAllBlogers();
-    $cntBlogers = count($allBlogers);
-    for ($i = 0; $i < $cntBlogers; $i++) {
-        $answer = strip_tags($allBlogers[$i][0]) . ". " . strip_tags($allBlogers[$i][1]);
-        $bot->sendMessage($message->getChat()->getId(), $answer, "HTML", true);
-    }
-    //выводим на печать текст статьи
-
+    //выводит список блогеров
+    require_once(ROOT . '/components/ListAllBlogers.php');
 
 });
 
-
-/*include_once('list_of_bloggers/list.php');
-if ($_GET['newsname'] == "lastvideo") {
-    $cnt = count($array);
-
-    for ($i = 0; $i < $cnt; $i++) {
-        $content = simplexml_load_file('http://www.youtube.com/feeds/videos.xml?channel_id=' . $array[$i]);
-//var_dump($content);
-        $index = 0;
-        foreach ($content->entry as $item) {
-            $id = $item->id;
-            $id = trim(substr($id, 9));
-            $answer = "https://www.youtube.com/watch?v=" . "{$id}";
-            if ($index < 1) {
-                if (file_get_contents("list_of_files/{$i}file.txt") != $id) {
-                    $bot->sendMessage('@choicenews', $answer);
-                }
-                $index++;
-
-                // открываем файл, если файл не существует,
-                $fp = fopen("list_of_files/{$i}file.txt", 'w');
-                // записываем в файл текст
-                fwrite($fp, $id);
-                // закрываем
-                fclose($fp);
-            }
-            $index++;
-        }
-    }
-}*/
-
-
 //require_once(ROOT . '/components/CheckForUpdates.php');
 //require_once('parser.php');
-
+require_once(ROOT . '/components/AddNewUser.php');
 $bot->run();
