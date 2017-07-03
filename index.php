@@ -14,7 +14,7 @@ require_once(ROOT . '/components/Autoload.php');
 
 
 // создаем переменную бота
-$token = "";
+$token = "357426031:AAF2iYOcp4IDX26TxRCV0lw7Ugp35dal7m4";
 $bot = new \TelegramBot\Api\Client($token);
 
 // если бот еще не зарегистрирован - регистрируем
@@ -43,10 +43,8 @@ if ($_GET['send'] == "checkforsend") {
 
 // обязательное. Запуск бота
 $bot->command('start', function ($message) use ($bot) {
-    $answer = 'Добро пожаловать, я могу присылать тебе самые свежие видео с You Tube прямо сюда, 
-    для этого нажми /list, и пришли поочередно номера блогеров от которых ты хочешь получать видос, 
-    если тебе какой-то блогер надоест, также пришли его номе и я уберу его из твоего списка можешь
-     также нажать /help и увидеть мои команды' . "\xF0\x9F\x98\x83";
+    $answer = 'Добро пожаловать, я могу присылать тебе самые свежие видео с You Tube прямо сюда,  нажми /list и следуй инструкциям.
+Можешь также нажать /help и увидеть мои команды' . "\xF0\x9F\x98\x83";
     $bot->sendMessage($message->getChat()->getId(), $answer);
 });
 
@@ -54,14 +52,26 @@ $bot->command('start', function ($message) use ($bot) {
 $bot->command('help', function ($message) use ($bot) {
     $answer = 'Команды:
 /help - информация :)
+/subscriber - Списое подписок
 /list - Список блогеров';
 
     $bot->sendMessage($message->getChat()->getId(), $answer);
 });
 
 
+
+$bot->command('subscriber', function ($message) use ($bot) {
+    require_once(ROOT . '/components/GetListSubscriber.php');
+
+});
+
+
 $bot->command('list', function ($message) use ($bot) {
     //выводит список блогеров
+    $text = 'Для подписки на блогера из списка, введи его номер. Если ты хочешь подписаться на нескольких, то вводи их номера 
+отдельно в каждом смс. Для отписки от надоевшего блогера, также введи его порядковый номер из списка /list : '. PHP_EOL;
+
+    $bot->sendMessage($message->getChat()->getId(), $text);
     require_once(ROOT . '/components/ListAllBlogers.php');
 
 });

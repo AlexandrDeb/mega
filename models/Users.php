@@ -79,31 +79,34 @@ class Users
         return $categoryList;
     }
 
-/*
-//Список юзеров, которым нужно рассылать данную рассылку
-    public static function getUsersForSend($bloger_id)
+    //Список ,bloger_id, на которы, подписан определенный user
+    public static function getListBlogerIdByUser($user)
     {
+
+
         // Соединение с БД
         $db = Db::getConnection();
 
         // Текст запроса к БД
-        $sql = 'SELECT user  FROM users WHERE bloger_id = :bloger_id AND status="1"';
+        $sql = 'SELECT bloger_id  FROM users WHERE user = :user AND status="1"';
 
         // Используется подготовленный запрос
         $result = $db->prepare($sql);
-        $result->bindParam(':bloger_id', $bloger_id, PDO::PARAM_STR);
-
-        // Указываем, что хотим получить данные в виде массива
-        $result->setFetchMode(PDO::FETCH_ASSOC);
-
+        $result->bindParam(':user', $user, PDO::PARAM_STR);
 
         // Выполнение коменды
         $result->execute();
 
-        // Возвращаем значение
-        return $row = $result->fetch();
-    }*/
+        // Получение и возврат результатов
+        $i = 0;
+        $products = array();
+        while ($row = $result->fetch()) {
+            $products[$i]['bloger_id'] = $row['bloger_id'];
 
+            $i++;
+        }
+        return $products;
+    }
 
 //Список юзеров, которым нужно рассылать данную рассылку
     public static function getUsersForSend($bloger_id)

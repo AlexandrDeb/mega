@@ -65,6 +65,25 @@ class UserController
  
      }
 
+    //Получаем список подписок user на каналлы
+    public function getListSubscriber($user)
+    {
+        $list = array();
+        $listBlogerId = Users::getListBlogerIdByUser($user);
+        $cnt = count($listBlogerId);
+        for ($i = 0; $i < $cnt; $i++) {
+            $list[] = Channel::getTitleByBlogerId($listBlogerId[$i]['bloger_id']);
+        }
+        $cntList = count($list);
+        $convertInStr = '';
+        $index = 1;
+        for ($k = 0; $k <$cntList; $k++){
+            $convertInStr .=$index++ .'. '. $list[$k]['title']."<br>";
+        }
+
+        return $convertInStr;
+    }
+
     //удаляем подписку на блогера
     public function deleteSubscription($user, $bloger_id)
     {

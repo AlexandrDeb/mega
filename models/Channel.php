@@ -3,7 +3,7 @@
 class Channel
 {
 
-
+//получить название канала по id
     public static function getTitleByid($id)
     {
 
@@ -23,7 +23,29 @@ class Channel
         //возвращение результата
         return $result->fetch();
     }
-    
+
+    //получить название канала по id
+    public static function getTitleByBlogerId($bloger_id)
+    {
+
+        //Соединение с базой данных
+        $db = Db::getConnection();
+
+        $sql = 'SELECT title FROM channels WHERE bloger_id = :bloger_id';
+
+        //подгоовка запроса
+        $result = $db->prepare($sql);
+
+        $result->bindParam(':bloger_id', $bloger_id, PDO:: PARAM_INT);
+        $result->setFetchMode(PDO::FETCH_ASSOC);
+        //выполнение запроса
+        $result->execute();
+
+        //возвращение результата
+        return $result->fetch();
+    }
+
+
 
     public static function getAllBlogersFromChannel()
     {
